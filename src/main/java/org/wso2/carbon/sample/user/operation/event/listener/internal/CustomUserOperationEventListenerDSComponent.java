@@ -1,9 +1,9 @@
-package org.wso2.carbon.sample.user.unlock.on.maximum.account.unlock.time.internal;
+package org.wso2.carbon.sample.user.operation.event.listener.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.sample.user.unlock.on.maximum.account.unlock.time.DataHolder;
+import org.wso2.carbon.sample.user.operation.event.listener.DataHolder;
 import org.wso2.carbon.user.core.listener.UserOperationEventListener;
 import org.wso2.carbon.user.core.service.RealmService;
 
@@ -26,17 +26,18 @@ public class CustomUserOperationEventListenerDSComponent {
         context.getBundleContext().registerService(
                 UserOperationEventListener.class.getName(), DataHolder.getInstance().getCustomUserOperationEventListener(), new Properties());
 
-
         log.info("SampleUserOperationEventListenerDSComponent bundle activated successfully..");
     }
 
     protected void deactivate(ComponentContext context) {
+
         if (log.isDebugEnabled()) {
             log.debug("SampleUserOperationEventListenerDSComponent is deactivated ");
         }
     }
 
     protected void setRealmService(RealmService realmService) {
+
         if (log.isDebugEnabled()) {
             log.debug("Setting the Realm Service");
         }
@@ -44,6 +45,7 @@ public class CustomUserOperationEventListenerDSComponent {
     }
 
     protected void unsetRealmService(RealmService realmService) {
+
         if (log.isDebugEnabled()) {
             log.debug("UnSetting the Realm Service");
         }

@@ -1,87 +1,52 @@
-package org.wso2.carbon.sample.user.unlock.on.maximum.account.unlock.time;
+package org.wso2.carbon.sample.user.operation.event.listener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.CarbonConstants;
-import org.wso2.carbon.context.CarbonContext;
-import org.wso2.carbon.user.api.Permission;
 import org.wso2.carbon.user.core.UserStoreException;
 import org.wso2.carbon.user.core.UserStoreManager;
 import org.wso2.carbon.user.core.common.AbstractUserOperationEventListener;
+import org.wso2.carbon.identity.core.util.IdentityUtil;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.Date;
 import java.util.Map;
 
 public class SampleUserOperationEventListener extends AbstractUserOperationEventListener {
 
-    //private static Log log = LogFactory.getLog(SampleUserOperationEventListener.class);
+    private static final String ACCOUNT_UNLOCK_TIME_CLAIM = "http://wso2.org/claims/identity/unlockTime";
+    private static final String USER_OPERATION_EVENT_LISTENER_TYPE = "org.wso2.carbon.user.core.listener" + ".UserOperationEventListener";
+    private static final Log log = LogFactory.getLog(SampleUserOperationEventListener.class);
 
-    private static final Log audit = CarbonConstants.AUDIT_LOG;
-    private static String AUDIT_MESSAGE = "Initiator : %s | Action : %s | Target : %s ";
+    /**
+     * The maximum time where a user account is locked in minutes
+     */
+    private static String MAX_ACCOUNT_LOCKED_PERIOD = "Maximum.Account.Locked.Period";
 
+    /**
+     * This listener should execute After the IdentityMgtEventListener and before the IdentityStoreEventListener
+     * Hence the number should be 96 (Execution order ID of IdentityMgtEventListener is 95)
+     *
+     * @return 96 By default
+     */
     @Override
     public int getExecutionOrderId() {
 
-        //This listener should execute before the IdentityMgtEventListener
-        //Hence the number should be < 1357 (Execution order ID of IdentityMgtEventListener)
-        return 1356;
-    }
-
-
-    @Override
-    public boolean doPreAuthenticate(String userName, Object credential, UserStoreManager userStoreManager) throws UserStoreException {
-
-        //return super.doPreAuthenticate(userName, credential, userStoreManager);
-        return true;
-    }
-
-    @Override
-    public boolean doPreSetUserClaimValue(String userName, String claimURI, String claimValue, String profileName, UserStoreManager userStoreManager) throws UserStoreException {
-        //return super.doPreSetUserClaimValue(userName, claimURI, claimValue, profileName, userStoreManager);
-        return true;
-    }
-
-    @Override
-    public boolean doPostSetUserClaimValue(String userName, UserStoreManager userStoreManager) throws UserStoreException {
-        //return super.doPostSetUserClaimValue(userName, userStoreManager);
-        return true;
+        return 96;
     }
 
     @Override
     public boolean doPreSetUserClaimValues(String userName, Map<String, String> claims, String profileName, UserStoreManager userStoreManager) throws UserStoreException {
-        //return super.doPreSetUserClaimValues(userName, claims, profileName, userStoreManager);
+
+        if (claims.containsKey(ACCOUNT_UNLOCK_TIME_CLAIM)) {
+            String maxUnlockPeriod = IdentityUtil.readEventListenerProperty(USER_OPERATION_EVENT_LISTENER_TYPE,
+                    this.getClass().getName()).getProperties().get(MAX_ACCOUNT_LOCKED_PERIOD).toString();
+            Long maxUnlockPeriodMilli = Long.parseLong(maxUnlockPeriod) * 60000;     //Since the related claim is in milliseconds need to convert to milliseconds
+            String currentAccountUnlockTime = claims.get(ACCOUNT_UNLOCK_TIME_CLAIM);
+            if ((Long.parseLong(currentAccountUnlockTime) - System.currentTimeMillis()) > maxUnlockPeriodMilli) {
+                String limitedAccountUnlockTime = String.valueOf(System.currentTimeMillis() + maxUnlockPeriodMilli);
+                log.debug("Maximum user account unlock period exceeded, new unlock time is: " + new Date(Long.parseLong(limitedAccountUnlockTime)));
+                claims.replace(ACCOUNT_UNLOCK_TIME_CLAIM, limitedAccountUnlockTime);
+            }
+        }
         return true;
     }
-
-    @Override
-    public boolean doPostSetUserClaimValues(String userName, Map<String, String> claims, String profileName, UserStoreManager userStoreManager) throws UserStoreException {
-        //return super.doPostSetUserClaimValues(userName, claims, profileName, userStoreManager);
-        return true;
-    }
-
-    @Override
-    public boolean doPreGetUserClaimValue(String userName, String claim, String profileName, UserStoreManager storeManager) throws UserStoreException {
-        //return super.doPreGetUserClaimValue(userName, claim, profileName, storeManager);
-        return true;
-    }
-
-    @Override
-    public boolean doPreGetUserClaimValues(String userName, String[] claims, String profileName, Map<String, String> claimMap, UserStoreManager storeManager) throws UserStoreException {
-        //return super.doPreGetUserClaimValues(userName, claims, profileName, claimMap, storeManager);
-        return true;
-    }
-
-    @Override
-    public boolean doPostGetUserClaimValue(String userName, String claim, List<String> claimValue, String profileName, UserStoreManager storeManager) throws UserStoreException {
-        //return super.doPostGetUserClaimValue(userName, claim, claimValue, profileName, storeManager);
-        return true;
-    }
-
-    @Override
-    public boolean doPostGetUserClaimValues(String userName, String[] claims, String profileName, Map<String, String> claimMap, UserStoreManager storeManager) throws UserStoreException {
-        //return super.doPostGetUserClaimValues(userName, claims, profileName, claimMap, storeManager);
-        return true;
-    }
-
 }

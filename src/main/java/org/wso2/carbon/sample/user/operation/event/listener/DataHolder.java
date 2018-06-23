@@ -1,4 +1,4 @@
-package org.wso2.carbon.sample.user.unlock.on.maximum.account.unlock.time;
+package org.wso2.carbon.sample.user.operation.event.listener;
 
 import org.wso2.carbon.user.core.service.RealmService;
 
@@ -29,14 +29,17 @@ public class DataHolder {
     }
 
     public void setRealmService(RealmService realmService) {
+
         this.realmService = realmService;
     }
 
     public RealmService getRealmService() {
+
         return realmService;
     }
 
     public SampleUserOperationEventListener getCustomUserOperationEventListener() {
+
         return customUserOperationEventListener;
     }
 
