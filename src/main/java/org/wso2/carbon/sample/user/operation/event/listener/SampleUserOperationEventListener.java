@@ -45,6 +45,7 @@ public class SampleUserOperationEventListener extends AbstractUserOperationEvent
                 String limitedAccountUnlockTime = String.valueOf(System.currentTimeMillis() + maxUnlockPeriodMilli);
                 log.debug("Maximum user account unlock period exceeded, new unlock time is: " + new Date(Long.parseLong(limitedAccountUnlockTime)));
                 claims.replace(ACCOUNT_UNLOCK_TIME_CLAIM, limitedAccountUnlockTime);
+
             }
         }
         return true;
