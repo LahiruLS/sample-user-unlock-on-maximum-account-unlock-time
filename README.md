@@ -1,9 +1,9 @@
-##User operation event listener to unlock a locked user on a maximum account unlock time 
-##sample-user-unlock-on-maximum-account-unlock-time
+## User operation event listener to unlock a locked user on a maximum account unlock time 
+## sample-user-unlock-on-maximum-account-unlock-time
 This code repository contains a sample maven project that demonstrates how to use a user operation event listener to
 unlock a locked user on a maximum account unlock time on  WSO2 IS 5.4.1.
 
-##Instructions to use
+## Instructions to use
 
 1. Built the maven project using `mvn clean install`
 
@@ -17,11 +17,11 @@ unlock a locked user on a maximum account unlock time on  WSO2 IS 5.4.1.
 
 `</EventListener>`
 
-Please note that the Maximum value which the user account should not be locked is defined in `Maximum.Account.Locked.Period` Property. The unit id in minutes.
-##License 
+Please note that the Maximum value which the user account should not be locked is defined in `Maximum.Account.Locked.Period` Property. The unit is in minutes.
+## License 
 
   Apache License Version 2.0
 
-##Auther
+## Auther
 
 LahiruSA
